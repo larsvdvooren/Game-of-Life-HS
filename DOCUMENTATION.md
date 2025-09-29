@@ -1,9 +1,4 @@
 
-Gloss:
-MSYS2:
-> pacman -Syu
-> pacman -S mingw-w64-x86_64-freeglut
-
 
 handmatig aan path toevoegen
 freeglut downloaden [link ooit] dll in path zetten
@@ -18,3 +13,38 @@ freeglut downloaden [link ooit] dll in path zetten
 - Levend ()
 - Dood (voormalig levend)
 - Levenloos (nooit levend of dood geweest)
+
+# Inleiding
+
+
+# Onderzoek
+
+
+# Implementatie
+
+
+# Reflectie
+
+
+# Conclusie
+
+
+# Bronvermelding
+
+
+## Bronnen:
+
+
+
+
+
+## Prompts:
+### Claude:
+
+
+
+### ChatGPT:
+
+
+
+
