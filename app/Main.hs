@@ -5,7 +5,7 @@ import Control.Monad (replicateM)
 
 -- user changeable vars ###########################################################################################
 amountOfStartingCells :: Int
-amountOfStartingCells = 50 -- The amount of living cells a new board starts with
+amountOfStartingCells = 20 -- The amount of living cells a new board starts with
 
 
 -- ################################################################################################################
@@ -15,7 +15,7 @@ windowWidth = 800
 windowHeight = 800
 
 gridWidth, gridHeight :: Float
-gridWidth = 30 -- amount of cells the grid is wide
+gridWidth = 6 -- amount of cells the grid is wide
 gridHeight = gridWidth
 -- //gridHeight = 40
 padding :: Float
@@ -99,8 +99,8 @@ generateRandomIntBetween low high = randomRIO (low, high)
 -- Generates random coordinates on the board using generateRandomIntBetween
 getRandomCoords :: IO Cell
 getRandomCoords = do
-    x <- generateRandomIntBetween 0 (toInt gridWidth) -- Generates a random X coord between 0 and 2
-    y <-  generateRandomIntBetween 0 (toInt gridHeight) -- Generates a random Y coord between 0 and 2
+    x <- generateRandomIntBetween 0 (toInt gridWidth - 1) -- Generates a random X coord between 0 and 2
+    y <-  generateRandomIntBetween 0 (toInt gridHeight - 1) -- Generates a random Y coord between 0 and 2
     return (x, y)
 
 -- Generates an n number of random coords
