@@ -2,24 +2,26 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import System.Random (randomRIO)
 import Control.Monad (replicateM)
+import qualified Data.Set as Set
 
 -- user changeable vars ###########################################################################################
 amountOfStartingCells :: Int
-amountOfStartingCells = 20 -- The amount of living cells a new board starts with
-
-
--- ################################################################################################################
+--amountOfStartingCells = 20 -- The amount of living cells a new board starts with
+amountOfStartingCells = toInt (gridWidth * gridHeight / 10)
 
 windowHeight, windowWidth :: Int
 windowWidth = 800
 windowHeight = 800
 
 gridWidth, gridHeight :: Float
-gridWidth = 6 -- amount of cells the grid is wide
-gridHeight = gridWidth
--- //gridHeight = 40
+gridWidth = 2000 -- amount of cells the grid is wide
+gridHeight = gridWidth -- Can be untied from one another
+--gridHeight = 40
+
 padding :: Float
-padding = 200
+padding = 100
+
+-- ################################################################################################################
 
 -- further sizes are calculated based on above values
 fieldWidth, fieldHeight :: Float
@@ -80,9 +82,6 @@ draw board = pictures [drawGridLines, drawCells board]
 drawCells :: GameState -> Picture
 drawCells board = pictures (map drawCell board) 
 
--- draw :: GameState -> Picture
--- draw board = pictures (map drawCell board) 
-
 handleInput :: Event -> GameState -> GameState
 handleInput _ s = s
 
@@ -106,15 +105,43 @@ getRandomCoords = do
 -- Generates an n number of random coords
 generateRandomCoords :: Int -> IO [Cell]
 generateRandomCoords n = replicateM n getRandomCoords
+-- TODO: remove duplicates in GameState
 
+-- Counts the amount of coordinates in a 'state'
+printListLength :: Show a => String -> [a] -> IO ()
+printListLength label xs = putStrLn $ label ++ ": " ++ show (length xs)
+
+-- Removes duplicates from Gamestate
+removeDuplicates :: (Ord a) => [a] -> [a]
+removeDuplicates = go Set.empty
+  where
+    go _   []     = []
+    go set (x:xs)
+      | x `Set.member` set = go set xs
+      | otherwise          = x : go (Set.insert x set) xs
+
+
+
+
+
+-- Counts the amount of neighbors a cell has
+countCellNeighbors :: Cell -> GameState -> Int
+countCellNeighbors (x, y) board = length aliveNeighbors
+  where
+      neighborCoords = [(x + dx, y + dy) | dx <- [-1..1], dy <- [-1..1], (dx, dy) /= (0,0)]
+      aliveNeighbors = filter (`elem` board) neighborCoords
 
 main :: IO ()
 main = do
-    state <- initialState
+    uncleanedState <- initialState
+    printListLength "coord count pre removeDuplucates" uncleanedState
+    let state = removeDuplicates uncleanedState
+    printListLength "coord count post removeDuplucates" state
+    -- putStrLn (show (countCellNeighbors (0,0) state))
     play
       (InWindow "Game of Life" (windowWidth, windowHeight) (0,0))
-      white
-      60
+      black
+      1
       state
       draw
       handleInput
