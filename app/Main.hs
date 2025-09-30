@@ -7,14 +7,14 @@ import qualified Data.Set as Set
 -- user changeable vars ###########################################################################################
 amountOfStartingCells :: Int
 --amountOfStartingCells = 20 -- The amount of living cells a new board starts with
-amountOfStartingCells = toInt (gridWidth * gridHeight / 10)
+amountOfStartingCells = toInt (gridWidth * gridHeight / 1)
 
 windowHeight, windowWidth :: Int
 windowWidth = 800
 windowHeight = 800
 
 gridWidth, gridHeight :: Float
-gridWidth = 2000 -- amount of cells the grid is wide
+gridWidth = 40 -- amount of cells the grid is wide
 gridHeight = gridWidth -- Can be untied from one another
 --gridHeight = 40
 
@@ -41,6 +41,8 @@ type Cell = (Int, Int)
 type Board = [Cell]
 type GameState = Board
 
+-- TODO: NEED a better way to store cells, Set probably the way to go
+
 -- Sets up the initial board at start
 initialState :: IO GameState
 -- initialState = [(1,0), (2,1), (0,2), (1,2), (2,2)]
@@ -52,6 +54,7 @@ toPixelCoords (x,y) =
         fy = fromIntegral y * cellHeight - fieldHeight /2
     in (fx, fy)
 
+-- Draws individual cell on the board (Coordinates start at bottom left (0,0) and end at top right(gridWidth,gridHeight))
 drawCell :: (Int, Int) -> Picture
 drawCell pos = 
     let (x,y) = toPixelCoords pos
@@ -82,11 +85,13 @@ draw board = pictures [drawGridLines, drawCells board]
 drawCells :: GameState -> Picture
 drawCells board = pictures (map drawCell board) 
 
+-- Placeholder until interacton is implemented
 handleInput :: Event -> GameState -> GameState
 handleInput _ s = s
 
+-- Placeholder untill updates are implemented
 update :: Float -> GameState -> GameState
-update seconds x = x
+update _ = calculateNextGeneration
 
 toInt :: Float -> Int
 toInt = round
@@ -107,7 +112,7 @@ generateRandomCoords :: Int -> IO [Cell]
 generateRandomCoords n = replicateM n getRandomCoords
 -- TODO: remove duplicates in GameState
 
--- Counts the amount of coordinates in a 'state'
+-- Counts the amount of coordinates in current state
 printListLength :: Show a => String -> [a] -> IO ()
 printListLength label xs = putStrLn $ label ++ ": " ++ show (length xs)
 
@@ -120,9 +125,7 @@ removeDuplicates = go Set.empty
       | x `Set.member` set = go set xs
       | otherwise          = x : go (Set.insert x set) xs
 
-
-
-
+-- ################################ Life cooking here ################################## --
 
 -- Counts the amount of neighbors a cell has
 countCellNeighbors :: Cell -> GameState -> Int
@@ -131,17 +134,34 @@ countCellNeighbors (x, y) board = length aliveNeighbors
       neighborCoords = [(x + dx, y + dy) | dx <- [-1..1], dy <- [-1..1], (dx, dy) /= (0,0)]
       aliveNeighbors = filter (`elem` board) neighborCoords
 
+      -- TODO: break up into 2 functions, pointToNeighbors and countNeighbors
+
+calculateNextGeneration :: GameState -> GameState
+calculateNextGeneration board = removeDuplicates $ survivors ++ births
+  where
+    -- If a cell has 2 or 3 neighbors they survive to the next generation
+    survivors = [cell | cell <- board, let c = countCellNeighbors cell board, c == 2 || c == 3]   
+
+    -- if a dead/empty cell has 3 living neighbors that cell comes alive(again)
+    neighborCoords = [(x + dx, y + dy) | (x, y) <- board, dx <- [-1..1], dy <- [-1..1], (dx, dy) /= (0,0)]
+    deadNeighbors = filter (\cell -> cell `notElem` board) neighborCoords
+    births = [cell | cell <- deadNeighbors, countCellNeighbors cell board == 3]
+
+-- TODO: Police cells that leave the gamefield (get rid of padding if no worky)
+
+-- ######################################### EOL ####################################### --
+
 main :: IO ()
 main = do
     uncleanedState <- initialState
-    printListLength "coord count pre removeDuplucates" uncleanedState
+    printListLength "coord count pre removeDuplicates" uncleanedState
     let state = removeDuplicates uncleanedState
-    printListLength "coord count post removeDuplucates" state
+    printListLength "coord count post removeDuplicates" state
     -- putStrLn (show (countCellNeighbors (0,0) state))
     play
       (InWindow "Game of Life" (windowWidth, windowHeight) (0,0))
-      black
-      1
+      white
+      2
       state
       draw
       handleInput

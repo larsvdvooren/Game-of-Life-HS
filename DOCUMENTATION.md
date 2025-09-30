@@ -33,9 +33,11 @@ freeglut downloaden [link ooit] dll in path zetten
 
 #### Could
 - Speel/pauze knop
-- keypress voor 1 generatie
+- keypress voor volgende generatie
+- (HELE GROTE COULD) vorige generatie knop
 - Met muis plaatsbare cellen
 - gridsize + aantal initial cellen als parameter meegeven?
+- 
 
 #### Won't
 - /
@@ -116,6 +118,9 @@ DMV
 
 ## Bronnen:
 
+
+https://github.com/alexbooth/Game-of-Life-Haskell
+(Algoritme en het idee om Gloss te gebruiken)
 
 
 
