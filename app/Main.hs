@@ -7,7 +7,7 @@ import qualified Data.Set as Set
 -- user changeable vars ###########################################################################################
 amountOfStartingCells :: Int
 --amountOfStartingCells = 20 -- The amount of living cells a new board starts with
-amountOfStartingCells = toInt (gridWidth * gridHeight / 1)
+amountOfStartingCells = toInt (gridWidth * gridHeight / 10)
 
 windowHeight, windowWidth :: Int
 windowWidth = 800
@@ -139,15 +139,20 @@ countCellNeighbors (x, y) board = length aliveNeighbors
 calculateNextGeneration :: GameState -> GameState
 calculateNextGeneration board = removeDuplicates $ survivors ++ births
   where
-    -- If a cell has 2 or 3 neighbors they survive to the next generation
+    -- If a cell has either 2 or 3 neighbors that cell survives to the next generation
     survivors = [cell | cell <- board, let c = countCellNeighbors cell board, c == 2 || c == 3]   
 
-    -- if a dead/empty cell has 3 living neighbors that cell comes alive(again)
+    -- Gives a list of all coordinates adjacent to live cells
     neighborCoords = [(x + dx, y + dy) | (x, y) <- board, dx <- [-1..1], dy <- [-1..1], (dx, dy) /= (0,0)]
-    deadNeighbors = filter (\cell -> cell `notElem` board) neighborCoords
-    births = [cell | cell <- deadNeighbors, countCellNeighbors cell board == 3]
 
--- TODO: Police cells that leave the gamefield (get rid of padding if no worky)
+    -- Filters the list of gridsquares that border alive cells for currently occupied gridsquares
+    deadNeighbors = filter (\cell -> cell `notElem` board) neighborCoords
+
+    -- Checks if potential new cell gridsquares are out of bounds (inside (0,0) and (gridWidth,gridHeight))
+    checkIfInBounds = filter (\(x, y) -> x >= 0 && y >= 0 && x < toInt gridWidth && y < toInt gridHeight) deadNeighbors
+
+    -- Checks if the previously filterered gridsquares border 3 live cells exactly, if so, those cells come to life
+    births = [cell | cell <- checkIfInBounds, countCellNeighbors cell board == 3]
 
 -- ######################################### EOL ####################################### --
 
@@ -157,11 +162,10 @@ main = do
     printListLength "coord count pre removeDuplicates" uncleanedState
     let state = removeDuplicates uncleanedState
     printListLength "coord count post removeDuplicates" state
-    -- putStrLn (show (countCellNeighbors (0,0) state))
     play
       (InWindow "Game of Life" (windowWidth, windowHeight) (0,0))
       white
-      2
+      5
       state
       draw
       handleInput
