@@ -2,7 +2,8 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.Pure.Game
 import System.Random (randomRIO)
 import Control.Monad (replicateM)
-import qualified Data.Set as Set
+-- import qualified Data.Set as Set
+import Data.List (sort, group)
 
 -- user changeable vars ###########################################################################################
 amountOfStartingCells :: Int
@@ -14,7 +15,7 @@ windowWidth = 800
 windowHeight = 800
 
 gridWidth, gridHeight :: Float
-gridWidth = 40 -- amount of cells the grid is wide
+gridWidth = 80 -- amount of cells the grid is wide
 gridHeight = gridWidth -- Can be untied from one another
 --gridHeight = 40
 
@@ -117,13 +118,16 @@ printListLength :: Show a => String -> [a] -> IO ()
 printListLength label xs = putStrLn $ label ++ ": " ++ show (length xs)
 
 -- Removes duplicates from Gamestate
-removeDuplicates :: (Ord a) => [a] -> [a]
-removeDuplicates = go Set.empty
-  where
-    go _   []     = []
-    go set (x:xs)
-      | x `Set.member` set = go set xs
-      | otherwise          = x : go (Set.insert x set) xs
+removeDuplicates :: (Ord x) => [x] -> [x] 
+removeDuplicates = map head . group . sort
+
+-- removeDuplicates :: (Ord a) => [a] -> [a]
+-- removeDuplicates = go Set.empty
+--   where
+--     go _   []     = []
+--     go set (x:xs)
+--       | x `Set.member` set = go set xs
+--       | otherwise          = x : go (Set.insert x set) xs
 
 -- ################################ Life cooking here ################################## --
 
@@ -164,8 +168,8 @@ main = do
     printListLength "coord count post removeDuplicates" state
     play
       (InWindow "Game of Life" (windowWidth, windowHeight) (0,0))
-      white
-      5
+      black
+      5 -- the frames per second Gloss runs at, in this case it is used as 'Generations Per Second'
       state
       draw
       handleInput
