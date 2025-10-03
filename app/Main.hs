@@ -35,8 +35,6 @@ cellHeight = fieldHeight / gridHeight
 
 -- life values (dead is former alive, lifeless has never been alive)
 aliveCell = green
-deadCell = greyN 0.8
-lifelessCell = black
 
 type Cell = (Int, Int)
 type Board = [Cell]
@@ -61,27 +59,28 @@ drawCell pos =
     let (x,y) = toPixelCoords pos
     in translate (x + cellWidth / 2) (y + cellHeight / 2) $ color aliveCell $ rectangleSolid cellWidth cellHeight
 
--- Draws the playfield for the gol
-drawGridLines :: Picture
-drawGridLines = color (black) $ pictures (verticalLines ++ horizontalLines)
-  where
-    halfFieldWidth = fieldWidth / 2
-    halfFieldHeight = fieldHeight / 2
+-- -- Draws the playfield for the gol
+-- drawGridLines :: Picture
+-- drawGridLines = color (black) $ pictures (verticalLines ++ horizontalLines)
+--   where
+--     halfFieldWidth = fieldWidth / 2
+--     halfFieldHeight = fieldHeight / 2
 
-    verticalLines = 
-        [line [ (x, -halfFieldHeight), (x, halfFieldHeight)] 
-        | i <- [0 .. gridWidth]
-        , let x = (i * cellWidth) - halfFieldWidth
-        ]  
+--     verticalLines = 
+--         [line [ (x, -halfFieldHeight), (x, halfFieldHeight)] 
+--         | i <- [0 .. gridWidth]
+--         , let x = (i * cellWidth) - halfFieldWidth
+--         ]  
 
-    horizontalLines = 
-      [ line [ (-halfFieldWidth, y), (halfFieldWidth, y) ]
-      | i <- [0 .. gridHeight]
-      , let y = (i * cellHeight) - halfFieldHeight
-      ]
+--     horizontalLines = 
+--       [ line [ (-halfFieldWidth, y), (halfFieldWidth, y) ]
+--       | i <- [0 .. gridHeight]
+--       , let y = (i * cellHeight) - halfFieldHeight
+--       ]
 
 draw :: GameState -> Picture
-draw board = pictures [drawGridLines, drawCells board]
+-- draw board = pictures [drawGridLines, drawCells board]
+draw board = pictures [drawCells board]
 
 drawCells :: GameState -> Picture
 drawCells board = pictures (map drawCell board) 

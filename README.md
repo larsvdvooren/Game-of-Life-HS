@@ -68,6 +68,8 @@ Waarom haskell hiervoor?
 #### Won't
 - /
 
+Een groot deel van deze requirements heb ik niet uit kunnen werken helaas.
+
 
 Online heb ik 3 implementaties van Conway's GoL gevonden die ik als inspiratie wil gaan gebruiken:
 - [Game-of-Life-Haskell](https://github.com/alexbooth/Game-of-Life-Haskell) van Alexander Booth
@@ -219,7 +221,11 @@ Een `Data.Set` hiervoor gebruiken heeft meerdere voordelen over de huidige imple
 
 Hiermee zou dus niet alleen de efficiëntie waarmee het programma generaties berekent vergroten, ook zou het een stap uit die berekening zelf halen.
 
+De code staat nu in comments onder de huidige `removeDuplicates` functie, maar is nu dus net in gebruik.
+
 >Misschien toch proberen?)
+
+N.B. Een uiteindelijke aesthetische beslissing heeft ervoor gezorgd dat de functie `drawGridlines` niet meer in gebruik is en dus in comments staat. Mocht je deze lijnen toch willen zien dan zal je de functie uit comments moeten halen, de achtergrondkleur van de applicatie (onderin main) óf de kleur van de gridlines aanpassen (in de functie zelf)
 
 # Reflectie
 >Wat heb je geleerd over het functionele paradigma? Wat werkte goed of juist niet?
@@ -249,7 +255,6 @@ Het meest waardevolle dat ik uit deze challenge heb gehaald met Haskell is niet 
 Conway's Game of Life is een passende metafoor: simpele regels kunnen leiden tot verrassend complexe patronen. De basisconcepten van functioneel programmeren zijn elegant, maar hun toepassing en implicaties zijn rijk en soms onverwacht. Met deze challenge heb ik veel kunnen leren en een beter perspectief gekregen op functioneel programmeren.
 
 # Bronvermelding
-
 
 ## Bronnen:
 
